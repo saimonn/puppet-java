@@ -19,6 +19,7 @@ class java::v6 {
     'intrepid',
     'jaunty',
     'lucid',
+    'squeeze',
     'lenny' : {
       package { 
         "sun-java6-bin":
