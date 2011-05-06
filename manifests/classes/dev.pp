@@ -5,7 +5,7 @@
 class java::dev {
   package {"maven2":
     ensure  => present,
-    require => Package["sun-java6-jdk"],
+    require => Package["java-1.6"],
   }
 
   package {"ant":
