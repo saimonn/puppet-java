@@ -24,6 +24,12 @@ class java::v6 {
       unless  => 'test $(readlink /etc/alternatives/java) = /usr/lib/jvm/java-6-sun/jre/bin/java',
       require => Package["sun-java6-bin"],
     }
+
+    exec {"set default keytool":
+      command => "update-alternatives --set keytool /usr/lib/jvm/java-6-sun/jre/bin/keytool || true",
+      unless  => 'test $(readlink /etc/alternatives/keytool) = /usr/lib/jvm/java-6-sun/jre/bin/keytool',
+      require => Package["sun-java6-bin"],
+    }
   
     $jvm = '6'
     file {"/etc/profile.d/java_home":
@@ -44,5 +50,4 @@ class java::v6 {
       ensure => present,
     }
   }
-
 }
