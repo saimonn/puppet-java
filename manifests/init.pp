@@ -1,4 +1,5 @@
 import "classes/*.pp"
+import "definitions/*.pp"
 
 class java {
   case $operatingsystem {
