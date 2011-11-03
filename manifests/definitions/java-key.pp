@@ -66,7 +66,7 @@ define java::key($ensure=present,
     absent: {
       exec {"java::key: Remove ${_kalias} from ${keystore}":
         command => "keytool -delete -alias ${_kalias} -keystore ${basedir}/${keystore} -storepass ${storepass}",
-        onlyif  => "keytool -lit -keystore ${keystore} -storepass ${storepass} -alias ${_kalias}",
+        onlyif  => "keytool -list -keystore ${keystore} -storepass ${storepass} -alias ${_kalias}",
       }
       file {["${basedir}/${_kalias}.csr", "${basedir}/${_kalias}.crt"]:
         ensure => absent,
