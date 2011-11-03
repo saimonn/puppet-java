@@ -20,7 +20,7 @@ define java::duplicate::keystore ($ensure=present,
 
   case $ensure {
     present: {
-      exec {"Duplicate ${srcKeystore} to ${destKeystore}":
+      exec {"Duplicate ${srcKeystore} to ${basedir}/${name}":
         command => "keytool -importkeystore -srckeystore ${srcKeystore} -destkeystore ${basedir}/${name} -srcstorepass ${srcStorepass} -deststorepass ${destStorepass}",
         creates => "${basedir}/${name}",
       }
