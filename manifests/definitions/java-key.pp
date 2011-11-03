@@ -50,8 +50,8 @@ define java::key($ensure=present,
         unless  => "keytool -list -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias}"
       }
 
-      exec {"java::key: Export $__kalias keypair":
-        command => "keytool -exportcert -keystore ${keystore} -storepass ${storepass} -alias ${_kalias} -file ${basedir}/${_kalias}.crt",
+      exec {"java::key: Export ${_kalias} keypair":
+        command => "keytool -exportcert -keystore ${keystore} -storepass ${storepass} -keypass ${keypass} -alias ${_kalias} -file ${basedir}/${_kalias}.crt",
         creates => "${basedir}/${_kalias}.crt",
         require => Exec["java::key: Creates ${_kalias} to ${keystore}"],
       }
