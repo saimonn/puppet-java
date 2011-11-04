@@ -1,8 +1,8 @@
 /*
 
-=Definition: java::duplicate::keystore
+=Definition: java::import::keystore
 
-Duplicate a java keystore, and set a new password on this one.
+Import a java keystore, and set a new password on this one.
 
 Args:
   $srcKeystore  - source keystore
@@ -11,7 +11,7 @@ Args:
   $destStorepass - new keystore password (default: changeit)
 
 */
-define java::duplicate::keystore ($ensure=present,
+define java::import::keystore ($ensure=present,
                                   $srcKeystore,
                                   $basedir,
                                   $srcStorepass='changeit',
