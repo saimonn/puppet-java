@@ -9,14 +9,14 @@ Args:
   $srcKeystore   - source keystore
   $basedir       - directory where you want to put the new keystore. Has to exists
   $srcStorepass  - source keystore password (default:changeit)
-  $destStorepass - new keystore password (default: changeit)
+  $destStorepass - new keystore password
 
 */
 define java::keystore::import ($ensure=present,
                                $srcKeystore,
                                $basedir,
                                $srcStorepass='changeit',
-                               $destStorepass='changeit'
+                               $destStorepass
                                ) {
 
   case $ensure {
