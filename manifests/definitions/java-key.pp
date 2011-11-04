@@ -1,10 +1,11 @@
 /*
 
-=Definition: java::key
+=Definition: java::keystore::keypair
 
 Creates (or delete) a keypair from a java keystore.
 
 Args:
+  $name             - key alias in keystore
   $keystore         - keystore filename (mandatory)
   $basedir          - keystore location (mandatory)
   $keyalg           - key algorithm (default: RSA)
@@ -22,20 +23,20 @@ Args:
 Note: keytool will update an existing keystore!
 
 */
-define java::key($ensure=present,
-                 $keystore,
-                 $basedir,
-                 $keyalg='RSA',
-                 $keysize=2048,
-                 $storepass='changeit',
-                 $kalias='',
-                 $validity=365,
-                 $commonName='localhost',
-                 $organisationUnit='na',
-                 $organisation='na',
-                 $country='CH',
-                 $keypass='changeit'
-                 ) {
+define java::keystore::keypair($ensure=present,
+                               $keystore,
+                               $basedir,
+                               $keyalg='RSA',
+                               $keysize=2048,
+                               $storepass='changeit',
+                               $kalias='',
+                               $validity=365,
+                               $commonName='localhost',
+                               $organisationUnit='na',
+                               $organisation='na',
+                               $country='CH',
+                               $keypass='changeit'
+                               ) {
 
   $_kalias = $kalias ? {
     '' => $name,

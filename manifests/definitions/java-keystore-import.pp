@@ -1,22 +1,23 @@
 /*
 
-=Definition: java::import::keystore
+=Definition: java::keystore::import
 
 Import a java keystore, and set a new password on this one.
 
 Args:
-  $srcKeystore  - source keystore
-  $basedir      - directory where you want to put the new keystore. Has to exists
-  $srcStorepass - source keystore password (default:changeit)
+  $name          - new keystore name
+  $srcKeystore   - source keystore
+  $basedir       - directory where you want to put the new keystore. Has to exists
+  $srcStorepass  - source keystore password (default:changeit)
   $destStorepass - new keystore password (default: changeit)
 
 */
-define java::import::keystore ($ensure=present,
-                                  $srcKeystore,
-                                  $basedir,
-                                  $srcStorepass='changeit',
-                                  $destStorepass='changeit'
-                                  ) {
+define java::keystore::import ($ensure=present,
+                               $srcKeystore,
+                               $basedir,
+                               $srcStorepass='changeit',
+                               $destStorepass='changeit'
+                               ) {
 
   case $ensure {
     present: {
