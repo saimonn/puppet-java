@@ -14,9 +14,9 @@ Args:
   $alias            - key pair alias (default: $name)
   $validity         - key pair validity (default: 3650 days)
   $commonName       - key pair common name (default: localhost)
-  $organisationUnit - key pair organisation unit (default: na)
-  $organisation     - key pair organisation (default: na)
-  $country          - key pair country (default: CH)
+  $organisationUnit - key pair organisation unit (default: empty)
+  $organisation     - key pair organisation (default: empty)
+  $country          - key pair country (default: empty)
   keypass           - private key password (default: changeit)
 
 
@@ -36,9 +36,9 @@ define java::keystore::keypair($ensure=present,
                                $kalias='',
                                $validity=3650,
                                $commonName='localhost',
-                               $organisationUnit='na',
-                               $organisation='na',
-                               $country='CH',
+                               $organisationUnit='',
+                               $organisation='',
+                               $country='',
                                $keypass='changeit'
                                ) {
 
@@ -49,7 +49,20 @@ define java::keystore::keypair($ensure=present,
 
   case $ensure {
     present: {
-      $dn = "cn=${commonName}, ou=${organisationUnit}, o=${organisation}, c=${country}"
+      $ou = $organisationUnit? {
+        '' => '',
+        default => ",ou=${organisationUnit}",
+      }
+      $o = $organisation? {
+        '' => '',
+        default => ",o=${organisation}",
+      }
+      $c = $country? {
+        '' => '',
+        default => ",c=${country}",
+      }
+
+      $dn = "cn=${commonName}${ou},${o},${c}"
       exec {"java::key: Creates ${_kalias} to ${keystore}":
         command => "keytool -genkeypair -keyalg ${keyalg} -keysize ${keysize} -keystore ${basedir}/${keystore} -storepass ${storepass} -storetype jks -alias ${_kalias} -validity ${validity} -dname '${dn}' -keypass ${keypass}",
         unless  => "keytool -list -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias}"
