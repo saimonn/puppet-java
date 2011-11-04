@@ -12,7 +12,7 @@ Args:
   $keysize          - key size (default: 2048)
   $storepass        - keystore password (default: changeit)
   $alias            - key pair alias (default: $name)
-  $validity         - key pair validity (default: 365 days)
+  $validity         - key pair validity (default: 3650 days)
   $commonName       - key pair common name (default: localhost)
   $organisationUnit - key pair organisation unit (default: na)
   $organisation     - key pair organisation (default: na)
@@ -20,7 +20,11 @@ Args:
   keypass           - private key password (default: changeit)
 
 
-Note: keytool will update an existing keystore!
+Notes: 
+  - keytool will update an existing keystore!
+  - according to https://issues.apache.org/bugzilla/show_bug.cgi?id=38217 , storepass and
+    keypass should be the same. As it's not sure it has to be the case in the future,
+    we let you the choice about that.
 
 */
 define java::keystore::keypair($ensure=present,
@@ -30,7 +34,7 @@ define java::keystore::keypair($ensure=present,
                                $keysize=2048,
                                $storepass='changeit',
                                $kalias='',
-                               $validity=365,
+                               $validity=3650,
                                $commonName='localhost',
                                $organisationUnit='na',
                                $organisation='na',
