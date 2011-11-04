@@ -2,7 +2,8 @@
 
 =Definition: java::keystore::import
 
-Import a java keystore, and set a new password on this one.
+Import a java keystore.
+It will either create a new keystore, or update an existing one.
 
 Args:
   $name          - new keystore name
