@@ -4,7 +4,7 @@ class java::jai {
 
   include java::params
 
-  common::archive::tar-gz{"${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed":
+  archive::tar-gz{"${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed":
     source  => "${java::params::jai_url_base}/${java::params::jai_version}/jai-${java::params::jai_version}-lib-linux-${java::params::jai_arch}.tar.gz",
     target  => "${java::params::jvm_path}/ext",
     require => Package["${java::params::pkgname}"],
@@ -15,7 +15,7 @@ class java::jai {
     target  => "${java::params::jvm_path}/ext/jai-${java::params::jai_version}/lib/libmlib_jai.so",
     require => [ 
       Package["${java::params::pkgname}"], 
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
     ],
   }
 
@@ -24,7 +24,7 @@ class java::jai {
     target  => "${java::params::jvm_path}/ext/jai-${java::params::jai_version}/lib/jai_core.jar",
     require => [ 
       Package["${java::params::pkgname}"], 
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
     ],
   }
   
@@ -33,7 +33,7 @@ class java::jai {
     target  => "${java::params::jvm_path}/ext/jai-${java::params::jai_version}/lib/jai_codec.jar",
     require => [            
       Package["${java::params::pkgname}"],
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
     ],
   }
 
@@ -42,7 +42,7 @@ class java::jai {
     target  => "${java::params::jvm_path}/ext/jai-${java::params::jai_version}/lib/mlibwrapper_jai.jar",
     require => [            
       Package["${java::params::pkgname}"],
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai-${java::params::jai_version}/.installed"]
     ],
   }
 

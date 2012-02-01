@@ -4,7 +4,7 @@ class java::jai-imageio {
 
   include java::params
 
-  common::archive::tar-gz{"${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed":
+  archive::tar-gz{"${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed":
     source => $architecture ? {
       "i386"  => "${java::params::jai_imageio_url_base}/jai_imageio-${java::params::jai_imageio_version}-lib-linux-i586.tar.gz",
       "amd64" => "${java::params::jai_imageio_url_base}/jai_imageio-${java::params::jai_imageio_version}-lib-linux-amd64.tar.gz",
@@ -18,7 +18,7 @@ class java::jai-imageio {
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/libclib_jiio.so",
     require => [ 
       Package["${java::params::pkgname}"], 
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],
   }
 
@@ -27,7 +27,7 @@ class java::jai-imageio {
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/jai_imageio.jar",
     require => [ 
       Package["${java::params::pkgname}"], 
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],
   }
   
@@ -36,7 +36,7 @@ class java::jai-imageio {
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/clibwrapper_jiio.jar",
     require => [            
       Package["${java::params::pkgname}"],
-      Common::Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
+      Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],
   }
 
