@@ -20,11 +20,11 @@ Args:
   keypass           - private key password (default: changeit)
 
 
-Notes: 
+Notes:
   - keytool will update an existing keystore!
-  - according to https://issues.apache.org/bugzilla/show_bug.cgi?id=38217 , storepass and
-    keypass should be the same. As it's not sure it has to be the case in the future,
-    we let you the choice about that.
+  - according to https://issues.apache.org/bugzilla/show_bug.cgi?id=38217 ,
+    storepass and keypass should be the same. As it's not sure it has
+    to be the case in the future, we let you the choice about that.
 
 */
 define java::keystore::keypair($ensure=present,
@@ -43,39 +43,39 @@ define java::keystore::keypair($ensure=present,
                                ) {
 
   $_kalias = $kalias ? {
-    '' => $name,
+    ''      => $name,
     default => $kalias,
   }
 
   case $ensure {
     present: {
       $ou = $organisationUnit? {
-        '' => '',
+        ''      => '',
         default => ",ou=${organisationUnit}",
       }
       $o = $organisation? {
-        '' => '',
+        ''      => '',
         default => ",o=${organisation}",
       }
       $c = $country? {
-        '' => '',
+        ''      => '',
         default => ",c=${country}",
       }
 
-      $dn = "cn=${commonName}${ou},${o},${c}"
+      $dn = "cn=${commonName}${ou}${o}${c}"
       exec {"java::key: Creates ${_kalias} to ${keystore}":
         command => "keytool -genkeypair -keyalg ${keyalg} -keysize ${keysize} -keystore ${basedir}/${keystore} -storepass ${storepass} -storetype jks -alias ${_kalias} -validity ${validity} -dname '${dn}' -keypass ${keypass}",
         unless  => "keytool -list -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias}"
       }
 
       exec {"java::key: Export ${_kalias} keypair":
-        command => "keytool -exportcert -keystore ${keystore} -storepass ${storepass} -keypass ${keypass} -alias ${_kalias} -file ${basedir}/${_kalias}.crt",
+        command => "keytool -exportcert -keystore ${basedir}/${keystore} -storepass ${storepass} -keypass ${keypass} -alias ${_kalias} -file ${basedir}/${_kalias}.crt",
         creates => "${basedir}/${_kalias}.crt",
         require => Exec["java::key: Creates ${_kalias} to ${keystore}"],
       }
 
       exec {"java::key: Generate CSR for ${_kalias}":
-        command => "keytool -certreq -keystore ${keystore} -storepass ${storepass} -alias ${_kalias} -keypass ${keypass} -file ${basedir}/${_kalias}.csr",
+        command => "keytool -certreq -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias} -keypass ${keypass} -file ${basedir}/${_kalias}.csr",
         creates => "${basedir}/${_kalias}.csr",
         require => Exec["java::key: Creates ${_kalias} to ${keystore}"],
       }
