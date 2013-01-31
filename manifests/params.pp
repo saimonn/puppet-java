@@ -8,6 +8,10 @@ class java::params {
       /CentOS/        => 'jdk-1.6.0',
       /Debian|Ubuntu/ => 'sun-java6-jdk',
     },
+    openjdk => $::operatingsystem ? {
+      /RedHat|CentOS/  => 'java-1.6.0-openjdk',
+      /Debian|Ubuntu/  => 'openjdk-6-jdk',
+    },
     default => $::operatingsystem ? {
       /RedHat/        => 'java-1.6.0-sun',
       /CentOS/        => 'jdk-1.6.0',
