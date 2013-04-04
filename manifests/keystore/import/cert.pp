@@ -27,8 +27,8 @@ define java::keystore::import::cert ($ensure=present,
     }
     absent: {
       exec {"Remove $name cert from ${keystore}":
-        exec   => "keytool -delete -keystore ${keystore} -alias ${name} -storepass ${storepass}",
-        onlyif => "keytool -list -keystore ${keystore} -alias ${name}",
+        command => "keytool -delete -keystore ${keystore} -alias ${name} -storepass ${storepass}",
+        onlyif  => "keytool -list -keystore ${keystore} -alias ${name}",
       }
     }
   }

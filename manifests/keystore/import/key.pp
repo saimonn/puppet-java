@@ -52,8 +52,8 @@ define java::keystore::import::key ($ensure=present,
     }
     absent: {
       exec {"Remove $name key from ${keystore}":
-        exec   => "keytool -delete -keystore ${keystore} -alias ${name} -storepass ${storepass}",
-        onlyif => "keytool -list -keystore ${keystore} -alias ${name}",
+        command => "keytool -delete -keystore ${keystore} -alias ${name} -storepass ${storepass}",
+        onlyif  => "keytool -list -keystore ${keystore} -alias ${name}",
       }
     }
   }
