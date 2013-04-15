@@ -12,8 +12,8 @@
 #
 #
 define java::keystore::import::cert (
-  $ensure=present,
   $cert,
+  $ensure=present,
   $keystore='${JAVA_HOME}/jre/lib/security/cacerts',
   $storepass='changeit',
 ) {
