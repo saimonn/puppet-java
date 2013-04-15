@@ -16,8 +16,8 @@ class java::jai-imageio {
   file {"${java::params::jvm_path}/jre/lib/${java::params::jai_arch}/libclib_jiio.so":
     ensure => link,
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/libclib_jiio.so",
-    require => [ 
-      Package["${java::params::pkgname}"], 
+    require => [
+      Package["${java::params::pkgname}"],
       Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],
   }
@@ -25,16 +25,16 @@ class java::jai-imageio {
   file {"${java::params::jvm_path}/jre/lib/ext/jai_imageio.jar":
     ensure => link,
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/jai_imageio.jar",
-    require => [ 
-      Package["${java::params::pkgname}"], 
+    require => [
+      Package["${java::params::pkgname}"],
       Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],
   }
-  
+
   file {"${java::params::jvm_path}/jre/lib/ext/clibwrapper_jiio.jar":
     ensure => link,
     target => "${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/lib/clibwrapper_jiio.jar",
-    require => [            
+    require => [
       Package["${java::params::pkgname}"],
       Archive::Tar-gz["${java::params::jvm_path}/ext/jai_imageio-${java::params::jai_imageio_version}/.installed"]
     ],

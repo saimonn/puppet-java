@@ -9,7 +9,7 @@ Args:
   $keystore  - keystore full path (default: ${JAVA_HOME}/jre/lib/security/cacerts)
   $storepass - keystore password (default: changeit)
 
-NOTE: please take care of $cert format. 
+NOTE: please take care of $cert format.
   Accepted formats are, for now: x509, DER
 
 */
@@ -17,7 +17,7 @@ define java::keystore::import::cert ($ensure=present,
                                      $cert,
                                      $keystore='${JAVA_HOME}/jre/lib/security/cacerts',
                                      $storepass='changeit') {
-  
+
   case $ensure {
     present: {
       exec {"Import ${name} cert in ${keystore}":
