@@ -1,26 +1,26 @@
-/*
-
-=Definition: java::keystore::import::key
-Import a private key in a keystore
-
-Args:
-  $name      - keypair alias in keystore
-  $pkey      - private key file
-  $cert      - certificate file
-  $pkey_pass - private key password
-  $keystore  - keystore full path (default: ${JAVA_HOME}/jre/lib/security/cacerts)
-  $storepass - keystore password (default: changeit)
-
-Require:
-  module openssl: https://github.com/camptocamp/puppet-openssl
-
-*/
-define java::keystore::import::key ($ensure=present,
-                                    $pkey,
-                                    $cert,
-                                    $pkey_pass,
-                                    $keystore='${JAVA_HOME}/jre/lib/security/cacerts',
-                                    $storepass='changeit') {
+# Definition: java::keystore::import::key
+# Import a private key in a keystore
+#
+# Args:
+#   $name      - keypair alias in keystore
+#   $pkey      - private key file
+#   $cert      - certificate file
+#   $pkey_pass - private key password
+#   $keystore  - keystore full path (default: ${JAVA_HOME}/jre/lib/security/cacerts)
+#   $storepass - keystore password (default: changeit)
+#
+# Require:
+#   module openssl: https://github.com/camptocamp/puppet-openssl
+#
+#
+define java::keystore::import::key (
+  $ensure=present,
+  $pkey,
+  $cert,
+  $pkey_pass,
+  $keystore='${JAVA_HOME}/jre/lib/security/cacerts',
+  $storepass='changeit',
+) {
 
   $cacert_cache_dir = '/var/cache/java_keys'
 
