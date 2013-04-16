@@ -1,15 +1,5 @@
 # Definition: java::::keystore::import::cert
-# Import a certificate in a keystore
-#
-# Args:
-#   $name      - certificate alias in keystore
-#   $cert      - certificate file
-#   $keystore  - keystore full path (default: ${JAVA_HOME}/jre/lib/security/cacerts)
-#   $storepass - keystore password (default: changeit)
-#
-# NOTE: please take care of $cert format.
-#   Accepted formats are, for now: x509, DER
-#
+# Obsoleted by java_ks
 #
 define java::keystore::import::cert (
   $cert,
@@ -18,19 +8,12 @@ define java::keystore::import::cert (
   $storepass='changeit',
 ) {
 
-  case $ensure {
-    present: {
-      exec {"Import ${name} cert in ${keystore}":
-        command => "keytool -importcert -alias ${name} -file ${cert} -keystore ${keystore} -storepass ${storepass} -noprompt -trustcacerts",
-        unless  => "keytool -list -keystore ${keystore} -alias ${name}",
-      }
+  fail "This definition is obsolete. Use `puppetlabs/java_ks` instead:
+    java_ks { '${name}:${keystore}':
+      ensure      => '${ensure}',
+      certificate => '${cert}',
+      password    => '${storepass}',
     }
-    absent: {
-      exec {"Remove $name cert from ${keystore}":
-        command => "keytool -delete -keystore ${keystore} -alias ${name} -storepass ${storepass}",
-        onlyif  => "keytool -list -keystore ${keystore} -alias ${name}",
-      }
-    }
-  }
+"
 }
 
