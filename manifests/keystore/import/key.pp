@@ -15,7 +15,7 @@ define java::keystore::import::key (
       ensure      => '${ensure}',
       certificate => '${cert}',
       private_key => '${pkey}',
-      password    => '${storepass}',
+      password    => '${pkey_pass}',
     }
 "
 }

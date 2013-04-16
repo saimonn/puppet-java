@@ -1,5 +1,6 @@
 require 'puppet-lint/tasks/puppet-lint'
 require 'puppetlabs_spec_helper/rake_tasks'
 
-task :default => [:spec, :lint]
+task :default => [:spec]
+#task :default => [:spec, :lint]
 
