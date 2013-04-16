@@ -72,4 +72,20 @@ define java::keystore::keypair(
     private_key => "${basedir}/${_kalias}.key",
     password    => $storepass,
   }
+
+  case $ensure {
+    'present': {
+      Openssl::Certificate::X509[$_kalias] ->
+      Java_ks["${_kalias}:${basedir}/${keystore}"]
+    }
+
+    'absent': {
+      Java_ks["${_kalias}:${basedir}/${keystore}"] ->
+      Openssl::Certificate::X509[$_kalias]
+    }
+
+    default: {
+      fail "\$ensure must be either 'present' or 'absent', got '${ensure}'"
+    }
+  }
 }
