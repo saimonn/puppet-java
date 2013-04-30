@@ -40,22 +40,12 @@ This class installs Java v6.
 ## Definitions
 
  * java::keystore::import
- * java::keystore::import::cert
- * java::keystore::import::key
  * java::keystore::keypair
 
 ### java::keystore::import
 
 The `java::keystore::import` definition allows to import a java keystore.
 
-### java::keystore::import::cert
+### java::keystore::keypair
 
-The `java::keystore::import` definition allows to import an SSL certificate into a java keystore.
-
-### java::keystore::import::key
-
-The `java::keystore::import` definition allows to import an SSL key into a java keystore.
-
-### java::keystore::import::key
-
-The `java::keystore::import` definition allows to cerate or delete an SSL keypair from a java keystore.
+The `java::keystore::keypair` definition manages a keypair in a java keystore.
