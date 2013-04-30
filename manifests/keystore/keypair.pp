@@ -8,14 +8,14 @@
 #   $name             - key alias in keystore
 #   $keystore         - keystore filename (mandatory)
 #   $basedir          - keystore location (mandatory)
-#   $keyalg           - key algorithm (default: RSA)
-#   $keysize          - key size (default: 2048)
+#   $keyalg           - key algorithm - DEPRECATED
+#   $keysize          - key size - DEPRECATED
 #   $storepass        - keystore password (default: changeit)
 #   $alias            - key pair alias (default: $name)
 #   $validity         - key pair validity (default: 3650 days)
 #   $commonName       - key pair common name (default: localhost)
-#   $organisationUnit - key pair organisation unit (default: empty)
-#   $organisation     - key pair organisation (default: empty)
+#   $organizationUnit - key pair organization unit (default: empty)
+#   $organization     - key pair organization (default: empty)
 #   $country          - key pair country (default: empty)
 #   keypass           - private key password (default: changeit)
 #
@@ -28,18 +28,18 @@
 #
 #
 define java::keystore::keypair(
-  $ensure=present,
   $keystore,
   $basedir,
-  $keyalg='RSA',
-  $keysize=2048,
+  $country,
+  $organization,
+  $ensure=present,
+  $keyalg=undef,
+  $keysize=undef,
   $storepass='changeit',
   $kalias='',
   $validity=3650,
   $commonName='localhost',
-  $organisationUnit='',
-  $organisation='',
-  $country='',
+  $organizationUnit=undef,
   $keypass='changeit',
 ) {
 
@@ -48,48 +48,44 @@ define java::keystore::keypair(
     default => $kalias,
   }
 
+  if $keyalg {
+    fail '$keyalg is deprecated'
+  }
+
+  if $keysize {
+    fail '$keysize is deprecated'
+  }
+
+  openssl::certificate::x509 { $_kalias:
+    ensure       => $ensure,
+    base_dir     => $basedir,
+    country      => $country,
+    organization => $organization,
+    unit         => $organizationUnit,
+    commonname   => $commonName,
+    days         => $validity,
+  }
+
+  java_ks { "${_kalias}:${basedir}/${keystore}":
+    ensure      => $ensure,
+    certificate => "${basedir}/${_kalias}.crt",
+    private_key => "${basedir}/${_kalias}.key",
+    password    => $storepass,
+  }
+
   case $ensure {
-    present: {
-      $ou = $organisationUnit? {
-        ''      => '',
-        default => ",ou=${organisationUnit}",
-      }
-      $o = $organisation? {
-        ''      => '',
-        default => ",o=${organisation}",
-      }
-      $c = $country? {
-        ''      => '',
-        default => ",c=${country}",
-      }
-
-      $dn = "cn=${commonName}${ou}${o}${c}"
-      exec {"java::key: Creates ${_kalias} to ${keystore}":
-        command => "keytool -genkeypair -keyalg ${keyalg} -keysize ${keysize} -keystore ${basedir}/${keystore} -storepass ${storepass} -storetype jks -alias ${_kalias} -validity ${validity} -dname '${dn}' -keypass ${keypass}",
-        unless  => "keytool -list -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias}"
-      }
-
-      exec {"java::key: Export ${_kalias} keypair":
-        command => "keytool -exportcert -keystore ${basedir}/${keystore} -storepass ${storepass} -keypass ${keypass} -alias ${_kalias} -file ${basedir}/${_kalias}.crt",
-        creates => "${basedir}/${_kalias}.crt",
-        require => Exec["java::key: Creates ${_kalias} to ${keystore}"],
-      }
-
-      exec {"java::key: Generate CSR for ${_kalias}":
-        command => "keytool -certreq -keystore ${basedir}/${keystore} -storepass ${storepass} -alias ${_kalias} -keypass ${keypass} -file ${basedir}/${_kalias}.csr",
-        creates => "${basedir}/${_kalias}.csr",
-        require => Exec["java::key: Creates ${_kalias} to ${keystore}"],
-      }
-
+    'present': {
+      Openssl::Certificate::X509[$_kalias] ->
+      Java_ks["${_kalias}:${basedir}/${keystore}"]
     }
-    absent: {
-      exec {"java::key: Remove ${_kalias} from ${keystore}":
-        command => "keytool -delete -alias ${_kalias} -keystore ${basedir}/${keystore} -storepass ${storepass}",
-        onlyif  => "keytool -list -keystore ${keystore} -storepass ${storepass} -alias ${_kalias}",
-      }
-      file {["${basedir}/${_kalias}.csr", "${basedir}/${_kalias}.crt"]:
-        ensure => absent,
-      }
+
+    'absent': {
+      Java_ks["${_kalias}:${basedir}/${keystore}"] ->
+      Openssl::Certificate::X509[$_kalias]
+    }
+
+    default: {
+      fail "\$ensure must be either 'present' or 'absent', got '${ensure}'"
     }
   }
 }
