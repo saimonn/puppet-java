@@ -14,8 +14,8 @@
 #   $alias            - key pair alias (default: $name)
 #   $validity         - key pair validity (default: 3650 days)
 #   $commonName       - key pair common name (default: localhost)
-#   $organisationUnit - key pair organisation unit (default: empty)
-#   $organisation     - key pair organisation (default: empty)
+#   $organizationUnit - key pair organization unit (default: empty)
+#   $organization     - key pair organization (default: empty)
 #   $country          - key pair country (default: empty)
 #   keypass           - private key password (default: changeit)
 #
@@ -31,7 +31,7 @@ define java::keystore::keypair(
   $keystore,
   $basedir,
   $country,
-  $organisation,
+  $organization,
   $ensure=present,
   $keyalg=undef,
   $keysize=undef,
@@ -39,7 +39,7 @@ define java::keystore::keypair(
   $kalias='',
   $validity=3650,
   $commonName='localhost',
-  $organisationUnit=undef,
+  $organizationUnit=undef,
   $keypass='changeit',
 ) {
 
@@ -60,8 +60,8 @@ define java::keystore::keypair(
     ensure       => $ensure,
     base_dir     => $basedir,
     country      => $country,
-    organisation => $organisation,
-    unit         => $organisationUnit,
+    organization => $organization,
+    unit         => $organizationUnit,
     commonname   => $commonName,
     days         => $validity,
   }
