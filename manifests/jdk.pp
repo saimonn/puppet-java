@@ -1,4 +1,4 @@
-# == Define: java:jdk
+# == Define: java::jdk
 #
 # Installs Java JDK
 #
@@ -7,89 +7,91 @@
 # [*ensure*]
 #   Whether the JDK is installed or not
 #
-# [*vendor*]
-#   The vendor of the JDK, can be 'openjdk' or 'sun'
-#
 # [*version*]
 #   The version of the JDK, can be '6' or '7'
 #
-# [*default*]
-#   Update-alternative to this JRE/JDK
+# [*vendor*]
+#   The vendor of the JDK, can be 'openjdk' or 'sun'
 #
 define java::jdk(
   $ensure = 'present',
-  $vendor = 'openjdk',
   $version = 6,
-  $default = true,
+  $vendor = 'openjdk',
 ) {
   validate_re($ensure, ['present', 'absent'])
-  validate_re($vendor, ['openjdk', 'sun'])
-  validate_re($version, ['6', '7'])
-  validate_bool($default)
 
-  $pkg_name = $::osfamily ? {
-    Debian => "${vendor}-${version}-jdk",
-    RedHat => "java-1.${version}.0-${vendor}-devel",
-  }
+  case $::osfamily {
+    Debian: {
+      case $::operatingssytem {
+        Debian: {
+          if $::lsbdistrelease <= 5 {
+            validate_re($version, [5, 6])
+            validate_re($vendor, ['sun'])
+          } elsif $::lsbdistrelease <= 6 {
+            validate_re($version, [6])
+            validate_re($vendor, ['sun', 'openjdk'])
+          } else {
+            validate_re($version, [6, 7])
+            validate_re($vendor, ['openjdk'])
+          }
+        }
+        Ubuntu: {
+          if $::lsbdistrelease <= 10.04 {
+            validate_re($version, [6])
+            validate_re($vendor, ['openjdk'])
+          } else {
+            validate_re($version, [6, 7])
+            validate_re($vendor, ['openjdk'])
+          }
+        }
+        default: {
+          fail("unsupported Operating System: ${::operatingsystem}")
+        }
+      }
+      $pkgs = [
+        "${vendor}-${version}-jre",
+        "${vendor}-${version}-jdk",
+      ]
 
-  if $vendor == 'sun' and $::osfamily == 'Debian' and $ensure == 'present' {
-
-    # Thanks to Java strange licensing
-    file {'/var/cache/debconf/sun-java6-bin.preseed':
-      ensure  => present,
-      content => 'sun-java6-bin   shared/accepted-sun-dlj-v1-1    boolean true',
-    }
-    ->
-    package {"sun-java${version}-bin":
-      ensure       => present,
-      responsefile => '/var/cache/debconf/sun-java6-bin.preseed',
-      before       => Package[$pkg_name],
-    }
-
-  }
-
-  package{$pkg_name:
-    ensure => $ensure,
-  }
-
-  if $default and $ensure == 'present' {
-
-    $java_alternative_path = $::osfamily ? {
-      Debian => "/usr/lib/jvm/java-${version}-${vendor}/jre/bin/java",
-      RedHat => "/usr/lib/jvm/jre-1.${version}.0-${vendor}.${::architecture}/bin/java",
-    }
-
-    $javac_alternative_path = $::osfamily ? {
-      Debian => "/usr/lib/jvm/java-${version}-${vendor}/bin/javac",
-      RedHat => "/usr/lib/jvm/java-1.${version}.0-${vendor}.${::architecture}/bin/javac",
-    }
-
-    # On Debian/Ubuntu status of update-java-alternatives is always 1,
-    # || true is a dirty workaround to stop puppet from thinking it failed!
-    # Update: this seems to work on Debian 6+
-    exec {'set default java':
-      command => "update-alternatives --set java ${java_alternative_path}",
-      unless  => "test $(readlink /etc/alternatives/java) = ${java_alternative_path}",
-      require => Package[$pkg_name],
-    }
-
-    exec {'set default javac':
-      command => "update-alternatives --set javac ${javac_alternative_path}",
-      unless  => "test $(readlink /etc/alternatives/javac) = ${javac_alternative_path}",
-      require => Package[$pkg_name],
-    }
-
-    if $::osfamily == 'Debian' {
-
-      $keytool_alternative_path = "/usr/lib/jvm/java-${version}-${vendor}/jre/bin/keytool"
-
-      exec {'set default keytool':
-        command => "update-alternatives --set keytool ${keytool_alternative_path}",
-        unless  => "test $(readlink /etc/alternatives/keytool) = ${keytool_alternative_path}",
-        require => Package[$pkg_name],
+      if $vendor == 'sun' and $ensure == 'present' {
+        # Thanks to Java strange licensing
+        file {'/var/cache/debconf/sun-java6-bin.preseed':
+          ensure  => present,
+          content =>
+          'sun-java6-bin   shared/accepted-sun-dlj-v1-1    boolean true',
+        }
+        ->
+        package {"sun-java${version}-bin":
+          ensure       => present,
+          responsefile => '/var/cache/debconf/sun-java6-bin.preseed',
+          before       => Package[$pkgs],
+        }
       }
     }
+    RedHat: {
+      case $version {
+        6: {
+          validate_re($vendor, ['openjdk', 'sun', 'ibm'])
+        }
+        7: {
+          validate_re($vendor, ['openjdk', 'oracle', 'ibm'])
+        }
+        default: {
+          fail("Unsupported JDK version: ${version}")
+        }
+      }
+      $pkgs = [
+        "java-1.${version}.0-${vendor}",
+        "java-1.${version}.0-${vendor}-devel",
+      ]
+    }
+    default: {
+      fail("Unsupported OS family: ${::osfamily}")
+    }
+  }
 
+  package{$pkgs:
+    ensure => $ensure,
   }
 
 }
