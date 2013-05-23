@@ -38,8 +38,11 @@ define java::keystore::keypair(
   $storepass='changeit',
   $kalias='',
   $validity=3650,
+  $state=undef,
+  $locality=undef,
   $commonName='localhost',
   $organizationUnit=undef,
+  $email=undef,
   $keypass='changeit',
 ) {
 
@@ -60,9 +63,12 @@ define java::keystore::keypair(
     ensure       => $ensure,
     base_dir     => $basedir,
     country      => $country,
+    state        => $state,
+    locality     => $locality,
+    commonname   => $commonName,
     organization => $organization,
     unit         => $organizationUnit,
-    commonname   => $commonName,
+    email        => $email,
     days         => $validity,
   }
 
