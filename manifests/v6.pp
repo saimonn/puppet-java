@@ -1,56 +1,56 @@
 class java::v6 {
 
-  include java::params
+  include ::java::params
 
-  if $operatingsystem =~ /Ubuntu|Debian/ and $java16_vendor == "sun" {
+  if $::osfamily == 'Debian' and $java16_vendor == 'sun' {
 
     # Thanks to Java strange licensing
-    file {"/var/cache/debconf/sun-java6-bin.preseed":
+    file {'/var/cache/debconf/sun-java6-bin.preseed':
       ensure  => present,
-      content => "sun-java6-bin   shared/accepted-sun-dlj-v1-1    boolean true",
+      content => 'sun-java6-bin   shared/accepted-sun-dlj-v1-1    boolean true',
     }
 
-    package {"sun-java6-bin":
+    package {'sun-java6-bin':
       ensure       => present,
-      responsefile => "/var/cache/debconf/sun-java6-bin.preseed",
-      require      => File["/var/cache/debconf/sun-java6-bin.preseed"],
-      before       => Package["${java::params::pkgname}"],
+      responsefile => '/var/cache/debconf/sun-java6-bin.preseed',
+      require      => File['/var/cache/debconf/sun-java6-bin.preseed'],
+      before       => Package[$java::params::pkgname],
     }
 
     # On Debian/Ubuntu status of update-java-alternatives is always 1,
     # || true is a dirty workaround to stop puppet from thinking it failed!
-    exec {"set default jvm":
-      command => "update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java || true",
+    exec {'set default jvm':
+      command => 'update-alternatives --set java /usr/lib/jvm/java-6-sun/jre/bin/java || true',
       unless  => 'test $(readlink /etc/alternatives/java) = /usr/lib/jvm/java-6-sun/jre/bin/java',
-      require => Package["sun-java6-bin"],
+      require => Package['sun-java6-bin'],
     }
 
-    exec {"set default keytool":
-      command => "update-alternatives --set keytool /usr/lib/jvm/java-6-sun/jre/bin/keytool || true",
+    exec {'set default keytool':
+      command => 'update-alternatives --set keytool /usr/lib/jvm/java-6-sun/jre/bin/keytool || true',
       unless  => 'test $(readlink /etc/alternatives/keytool) = /usr/lib/jvm/java-6-sun/jre/bin/keytool',
-      require => Package["sun-java6-bin"],
+      require => Package['sun-java6-bin'],
     }
 
     # file was renamed with .sh extension (issue #19)
-    file {"/etc/profile.d/java_home":
+    file {'/etc/profile.d/java_home':
       ensure  => absent,
     }
     $jvm = '6'
-    file {"/etc/profile.d/java_home.sh":
+    file {'/etc/profile.d/java_home.sh':
       ensure  => present,
-      content => template("java/java-home.erb"),
+      content => template('java/java-home.erb'),
     }
 
   }
 
-  package {"${java::params::pkgname}":
-    alias  => "java-1.6",
+  package {$java::params::pkgname:
+    alias  => 'java-1.6',
     ensure => present,
   }
 
-  if $operatingsystem =~ /RedHat|CentOS/ {
+  if $::osfamily == 'RedHat' {
     package {"${java::params::pkgname}-devel":
-      alias  => "java-1.6-devel",
+      alias  => 'java-1.6-devel',
       ensure => present,
     }
   }
