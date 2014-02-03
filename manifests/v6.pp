@@ -31,8 +31,12 @@ class java::v6 {
       require => Package["sun-java6-bin"],
     }
 
-    $jvm = '6'
+    # file was renamed with .sh extension (issue #19)
     file {"/etc/profile.d/java_home":
+      ensure  => absent,
+    }
+    $jvm = '6'
+    file {"/etc/profile.d/java_home.sh":
       ensure  => present,
       content => template("java/java-home.erb"),
     }
